@@ -1,0 +1,73 @@
+﻿@page "/login"
+@using System.Text;
+@using System.Security.Cryptography;
+@inject UserController userController
+@inject NavigationManager navigationManager
+@using Task_Management.Model;
+@using Task_Management.Service;
+
+<h3>Login</h3>
+
+<EditForm Model="@loginUser" OnValidSubmit="SubmitLogin">
+    <DataAnnotationsValidator />
+    <div>
+        <label for="Email">Correo Electrónico:</label>
+        <InputText id="Email" @bind-Value="loginUser.Email" class="form-control" />
+    </div>
+    <div>
+        <label for="Password">Contraseña:</label>
+        <InputText id="Password" type="password" @bind-Value="loginUser.Password" class="form-control" />
+    </div>
+    <button type="submit" class="btn btn-primary">Iniciar Sesión</button>
+</EditForm>
+
+<div>
+    <p>¿No tienes una cuenta? <a href="/register">Regístrate</a></p>
+</div>
+
+@if (!string.IsNullOrEmpty(errorMessage))
+{
+    <div class="alert alert-danger" role="alert">
+        @errorMessage
+    </div>
+}
+
+@code {
+    User loginUser = new User();
+    string errorMessage = string.Empty;
+
+    void SubmitLogin()
+    {
+        try
+        {
+            string hashedPassword = GetHashSha256(loginUser.Password);
+            bool isAuthenticated = userController.Validar(loginUser.Email, hashedPassword);
+
+            if (isAuthenticated)
+            {
+                // Redirigir a la página principal u otra página después del inicio de sesión exitoso
+                navigationManager.NavigateTo("/Task");
+            }
+            else
+            {
+                // Manejar el caso en que la autenticación falla
+                errorMessage = "Error de autenticación. Verifica tus credenciales.";
+            }
+        }
+        catch (Exception ex)
+        {
+            // Manejar errores generales
+            errorMessage = $"Error: {ex.Message}";
+        }
+    }
+
+    string GetHashSha256(string clave)
+    {
+        byte[] bytes = Encoding.Unicode.GetBytes(clave);
+        using (SHA256Managed hashstring = new SHA256Managed())
+        {
+            byte[] hash = hashstring.ComputeHash(bytes);
+            return string.Concat(hash.Select(b => $"{b:x2}"));
+        }
+    }
+}

@@ -1,0 +1,60 @@
+﻿@page "/register"
+@inject UserController userController
+@inject Task_Management.DAL.Contexto Contexto
+@inject NavigationManager navigationManager
+@using Task_Management.Model;
+@using Task_Management.Service;
+
+<h3>Registro de Usuario</h3>
+
+<EditForm Model="@newUser" OnValidSubmit="HandleValidSubmit">
+    <DataAnnotationsValidator />
+    <div>
+        <label for="Name">Nombre:</label>
+        <InputText id="Name" @bind-Value="newUser.Name" class="form-control" />
+    </div>
+    <div>
+        <label for="Email">Correo Electrónico:</label>
+        <InputText id="Email" @bind-Value="newUser.Email" class="form-control" />
+    </div>
+    <div>
+        <label for="Password">Contraseña:</label>
+        <InputText id="Password" @bind-Value="newUser.Password" class="form-control" />
+    </div>
+    <div>
+        <label for="ConfirmPassword">Confirmar Contraseña:</label>
+        <InputText id="ConfirmPassword" @bind-Value="confirmPassword" class="form-control" />
+    </div>
+    <button type="submit" class="btn btn-primary">Registrarse</button>
+</EditForm>
+
+@code {
+    User newUser = new User();
+    string confirmPassword = "";
+
+    void HandleValidSubmit()
+    {
+        if (newUser.Password == confirmPassword)
+        {
+            bool success = userController.AddUser(newUser);
+
+            if (success)
+            {
+                // Redirigir a la página de inicio de sesión u otra página
+                navigationManager.NavigateTo("/login");
+            }
+            else
+            {
+                // Manejar el caso en que el registro falla
+                // Puedes mostrar un mensaje de error o realizar otras acciones
+                Console.WriteLine("Error al registrar el usuario.");
+            }
+        }
+        else
+        {
+            // Contraseñas no coinciden, manejar según tus necesidades
+            Console.WriteLine("Las contraseñas no coinciden.");
+        }
+    }
+}
+
