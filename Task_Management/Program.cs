@@ -29,6 +29,10 @@ builder.Services.AddAuthentication(options =>
     options.LoginPath = "/login"; // Ruta de la página de inicio de sesión
 });
 
+
+builder.Services.AddScoped<IUserService, UserService>();
+
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
