@@ -13,14 +13,14 @@ namespace Task_Management.DAL
         public Contexto(DbContextOptions<Contexto> options) : base(options)
         {
         }
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
-        {
-            base.OnModelCreating(modelBuilder);
-            modelBuilder.Entity<TaskModel>()
-            .HasOne(t => t.User)
-            .WithMany(u => u.TaskModels)
-            .HasForeignKey(t => t.UserId);
+        //protected override void OnModelCreating(ModelBuilder modelBuilder)
+        //{
+        //    base.OnModelCreating(modelBuilder);
+        //    modelBuilder.Entity<TaskModel>()
+        //    .HasOne(t => t.User)
+        //    .WithMany(u => u.TaskModels)
+        //    .HasForeignKey(t => t.UserId);
 
-        }
+        //}
     }
 }

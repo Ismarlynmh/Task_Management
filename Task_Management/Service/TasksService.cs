@@ -63,9 +63,20 @@ namespace Task_Management.Service
         public List<TaskModel> GetTasks()
         {
             return _contexto.TaskModel
-                .Include(task => task.User) // Carga la relación con User
-                .ToList();
+                    .Include(task => task.User)
+                    .Select(task => new TaskModel
+                    {
+                        // Asigna las propiedades necesarias desde la entidad original
+                        // Esto puede depender de la estructura de tu clase TaskModel
+                        Id = task.Id,
+                        Title = task.Title,
+                        Description = task.Description,
+                        // Otros campos si es necesario
+                        User = task.User // Puedes incluir la propiedad de navegación User si es necesario
+                    })
+                    .ToList();
         }
+
 
         public void ModificarTask(TaskModel taskModel)
         {

@@ -45,10 +45,10 @@
 </table>
 
 @code {
-    List<TaskModel> tasks;
+    List<Task_Management.Model.TaskModel> tasks;
 
     protected override void OnInitialized()
     {
-        tasks = tasksService.GetTasks();
+        tasks = tasksService.GetTasks().ToList();
     }
 }
