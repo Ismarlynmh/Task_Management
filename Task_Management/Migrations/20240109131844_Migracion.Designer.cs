@@ -12,7 +12,7 @@ using Task_Management.DAL;
 namespace TaskManagement.Migrations
 {
     [DbContext(typeof(Contexto))]
-    [Migration("20240108162728_Migracion")]
+    [Migration("20240109131844_Migracion")]
     partial class Migracion
     {
         /// <inheritdoc />
@@ -70,6 +70,13 @@ namespace TaskManagement.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("UserId"));
 
                     b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
