@@ -1,73 +1,59 @@
 ﻿@page "/login"
-@using System.Text;
-@using System.Security.Cryptography;
-@inject UserController userController
-@inject NavigationManager navigationManager
-@using Task_Management.Model;
-@using Task_Management.Service;
+@using Task_Management.Model
+@using Task_Management.Service
+@using Task_Management.Services;
+@inject IUserService UserService
+@inject NavigationManager NavigationManager
+@using System.Threading.Tasks;
+@using Microsoft.AspNetCore.Components;
 
-<h3>Login</h3>
-
-<EditForm Model="@loginUser" OnValidSubmit="SubmitLogin">
+<EditForm Model="@userModel" OnValidSubmit="HandleValidSubmit">
     <DataAnnotationsValidator />
     <div>
         <label for="Email">Correo Electrónico:</label>
-        <InputText id="Email" @bind-Value="loginUser.Email" class="form-control" />
+        <InputText id="Email" @bind-Value="userModel.Email" class="form-control" />
     </div>
     <div>
         <label for="Password">Contraseña:</label>
-        <InputText id="Password" type="password" @bind-Value="loginUser.Password" class="form-control" />
+        <InputText id="Password" type="password" @bind-Value="userModel.Password" class="form-control" />
     </div>
     <button type="submit" class="btn btn-primary">Iniciar Sesión</button>
-</EditForm>
 
 <div>
     <p>¿No tienes una cuenta? <a href="/register">Regístrate</a></p>
 </div>
-
-@if (!string.IsNullOrEmpty(errorMessage))
-{
-    <div class="alert alert-danger" role="alert">
-        @errorMessage
-    </div>
-}
+    <ValidationSummary />
+</EditForm>
 
 @code {
-    User loginUser = new User();
-    string errorMessage = string.Empty;
+    private User userModel = new User();
 
-    void SubmitLogin()
+    private  void HandleValidSubmit()
     {
-        try
+        if (_userService != null && _navigationManager != null)
         {
-            string hashedPassword = GetHashSha256(loginUser.Password);
-            bool isAuthenticated = userController.Validar(loginUser.Email, hashedPassword);
+            // Logic to authenticate the user
+            var user =  _userService.Authenticate(userModel.Email, userModel.Password);
 
-            if (isAuthenticated)
+            if (user != null)
             {
-                // Redirigir a la página principal u otra página después del inicio de sesión exitoso
-                navigationManager.NavigateTo("/Task");
+                // Login successful
+                _navigationManager.NavigateTo("/Task");
             }
             else
             {
-                // Manejar el caso en que la autenticación falla
-                errorMessage = "Error de autenticación. Verifica tus credenciales.";
+                // Login failed
+                _errorMessage = "Invalid email or password";
             }
-        }
-        catch (Exception ex)
-        {
-            // Manejar errores generales
-            errorMessage = $"Error: {ex.Message}";
         }
     }
 
-    string GetHashSha256(string clave)
-    {
-        byte[] bytes = Encoding.Unicode.GetBytes(clave);
-        using (SHA256Managed hashstring = new SHA256Managed())
-        {
-            byte[] hash = hashstring.ComputeHash(bytes);
-            return string.Concat(hash.Select(b => $"{b:x2}"));
-        }
-    }
+
+    [Inject]
+    private IUserService _userService { get; set; }
+
+    [Inject]
+    private NavigationManager _navigationManager { get; set; }
+
+    private string _errorMessage = string.Empty;
 }

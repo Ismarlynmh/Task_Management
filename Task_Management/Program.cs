@@ -1,8 +1,12 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.Extensions.DependencyInjection;
 using Task_Management.DAL;
 using Task_Management.Service;
+using Microsoft.AspNetCore.Authentication.OpenIdConnect;
+using Task_Management.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 var ConStr = builder.Configuration.GetConnectionString("ConStr");
@@ -15,6 +19,15 @@ builder.Services.AddScoped<UserController>();
 builder.Services.AddScoped<UserService>();
 builder.Services.AddDbContext<Contexto>(options =>
 options.UseSqlServer(ConStr));
+
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+})
+.AddCookie(options =>
+{
+    options.LoginPath = "/login"; // Ruta de la página de inicio de sesión
+});
 
 var app = builder.Build();
 

@@ -1,60 +1,30 @@
-﻿using Task_Management.Model;
+﻿using Microsoft.EntityFrameworkCore;
 using Task_Management.DAL;
-using System.Linq;
-using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
-using BCryptNet = BCrypt.Net.BCrypt;
+using Task_Management.Model;
 
-public class UserService
+
+namespace Task_Management.Services
 {
-    private readonly Contexto _contexto;
-
-    public UserService(Contexto contexto)
+    public interface IUserService
     {
-        _contexto = contexto;
+        Task<User> Authenticate(string email, string password);
     }
 
-    public List<User> GetUsers()
+    public class UserService : IUserService
     {
-        return _contexto.User.ToList();
-    }
+        private readonly Contexto _contexto;
 
-    public bool Login(User loginUser)
-    {
-        // Buscar al usuario por correo electrónico
-        var user = _contexto.User.FirstOrDefault(u => u.Email == loginUser.Email);
-
-        if (user != null)
+        public UserService(Contexto contexto)
         {
-            // Verificar la contraseña utilizando BCrypt
-            if (BCrypt.Net.BCrypt.Verify(loginUser.Password, user.Password))
-            {
-                return true;
-            }
+            _contexto = contexto;
         }
 
-        return false;
+        public async Task<User> Authenticate(string email, string password)
+        {
+            var user = await _contexto.User
+                .FirstOrDefaultAsync(u => u.Email == email && u.Password == password);
+
+            return user;
+        }
     }
-    private string EncryptPassword(string password)
-    {
-        // Define la complejidad del cifrado (cost factor)
-        // Cuanto mayor sea el valor, más seguro pero más lento será
-        int workFactor = 12;
-
-        // Genera un hash de la contraseña usando BCrypt
-        string hashedPassword = BCrypt.Net.BCrypt.HashPassword(password, workFactor);
-
-        return hashedPassword;
-    }
-
-
-
-    public void AddUser(User user)
-    {
-        // Asegurarnos de que la contraseña esté cifrada antes de almacenarla en la base de datos
-        user.Password = EncryptPassword(user.Password);
-        _contexto.User.Add(user);
-        _contexto.SaveChanges();
-    }
-
 }
