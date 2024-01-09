@@ -62,7 +62,7 @@ namespace Task_Management.Service
 
         public List<TaskModel> GetTasks()
         {
-            return _contexto.TaskModel
+            return (List<TaskModel>)_contexto.TaskModel
                     .Include(task => task.User)
                     .Select(task => new TaskModel
                     {
@@ -74,7 +74,7 @@ namespace Task_Management.Service
                         // Otros campos si es necesario
                         User = task.User // Puedes incluir la propiedad de navegación User si es necesario
                     })
-                    .ToList();
+                    .AsNoTracking();
         }
 
 
