@@ -60,23 +60,12 @@ namespace Task_Management.Service
         }
 
 
-        public List<TaskModel> GetTasks()
+        public List<TaskModel> GetTasks(int userId)
         {
-            return (List<TaskModel>)_contexto.TaskModel
-                    .Include(task => task.User)
-                    .Select(task => new TaskModel
-                    {
-                        // Asigna las propiedades necesarias desde la entidad original
-                        // Esto puede depender de la estructura de tu clase TaskModel
-                        Id = task.Id,
-                        Title = task.Title,
-                        Description = task.Description,
-                        // Otros campos si es necesario
-                        User = task.User // Puedes incluir la propiedad de navegación User si es necesario
-                    })
-                    .AsNoTracking();
+            return _contexto.TaskModel
+                .Where(t => t.UserId == userId)
+                .ToList();
         }
-
 
         public void ModificarTask(TaskModel taskModel)
         {

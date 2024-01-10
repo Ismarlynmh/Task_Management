@@ -1,11 +1,72 @@
-﻿<!-- Pagina.razor -->
-@page "/TaskList"
+﻿@page "/TaskList"
 @inject TasksService tasksService
 @using Task_Management.Model
 @using Task_Management.Service
 @using System.Collections.Generic
 
-<h3>Lista de Tareas y Usuarios</h3>
+
+@* @if (tasks == null)
+{
+    <p>Loading tasks...</p>
+}
+else
+{ *@
+   <h3>Lista de Tareas y Usuarios</h3>
+<a class="btn btn-primary" href="/Task">Agregar nuevo</a>
+<a class="btn btn-primary" href="/">Inicio</a>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>ID Tarea</th>
+            <th>Título</th>
+            <th>Descripción</th>
+            <th>Fecha de Vencimiento</th>
+            <th>Completada</th>
+            <th>Prioridad</th>
+            <th>ID Usuario</th>
+            <th>Nombre Usuario</th>
+            <th>Correo Electrónico</th>
+            <th>Activo</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var task in tasks)
+        {
+            <tr>
+                <td>@task.Id</td>
+                <td>@task.Title</td>
+                <td>@task.Description</td>
+                <td>@task.DueDate.ToShortDateString()</td>
+                <td>
+                    <input type="checkbox" @bind="task.IsCompleted" disabled="@(task.IsCompleted ? "disabled" : null)" />
+                </td>
+                <td>@task.Priority</td>
+                <td>@task.UserId</td>
+            </tr>
+        }
+    </tbody>
+</table>
+@* } *@
+
+@code {
+    private List<TaskModel> tasks;
+    
+
+    public void OnInitialized()
+    {
+        if (tasksService != null)
+        {
+            tasks =  tasksService.GetTasks(1).ToList(); // Reemplaza 1 con el ID de usuario real
+        }
+        else
+        {
+            <p>No tasks available.</p>
+        }
+    }
+}
+
+@* <h3>Lista de Tareas y Usuarios</h3>
 <a class="btn btn-primary" href="/Task">Agregar nuevo</a>
 
 <table class="table">
@@ -52,3 +113,4 @@
         tasks = tasksService.GetTasks().ToList();
     }
 }
+ *@

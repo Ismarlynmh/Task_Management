@@ -18,6 +18,7 @@ builder.Services.AddServerSideBlazor();
 builder.Services.AddScoped<TasksService>();
 builder.Services.AddScoped<UserController>();
 builder.Services.AddScoped<UserService>();
+builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddDbContext<Contexto>(options =>
 {
     options.UseSqlServer(ConStr);
@@ -33,10 +34,6 @@ builder.Services.AddAuthentication(options =>
 {
     options.LoginPath = "/login"; // Ruta de la página de inicio de sesión
 });
-
-
-builder.Services.AddScoped<IUserService, UserService>();
-
 
 var app = builder.Build();
 
