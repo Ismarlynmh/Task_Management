@@ -8,6 +8,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Remove="Pages\TaskList.razor" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Remove="Source\_0e4fa062-c05a-4cf3-b2f4-415ed5027714.jpeg" />
   </ItemGroup>
 
@@ -33,6 +37,18 @@
     <Resource Include="wwwroot\images\_0e4fa062-c05a-4cf3-b2f4-415ed5027714.jpeg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
+  </ItemGroup>
+
+  <ItemGroup>
+    <UpToDateCheckInput Remove="Pages\TaskList.razor" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <_ContentIncludedByDefault Remove="Pages\TaskList.razor" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="Pages\TaskList.razor" />
   </ItemGroup>
 
 </Project>
